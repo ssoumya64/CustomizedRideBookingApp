@@ -6,20 +6,44 @@ import com.codingshuttle.project.uber.DTO.RideRequestDTO;
 import com.codingshuttle.project.uber.DTO.RiderDTO;
 import com.codingshuttle.project.uber.Entities.Driver;
 import com.codingshuttle.project.uber.Entities.Ride;
+import com.codingshuttle.project.uber.Entities.RideRequest;
+import com.codingshuttle.project.uber.Entities.enums.RideRequestStatus;
 import com.codingshuttle.project.uber.Entities.enums.RideStatus;
+import com.codingshuttle.project.uber.Repositories.RideRequestRepo;
 import com.codingshuttle.project.uber.Services.RideService;
 import com.codingshuttle.project.uber.Services.RiderService;
+import com.codingshuttle.project.uber.strategy.DriverMatchingStrategy;
+import com.codingshuttle.project.uber.strategy.RideFareCalculationStrategy;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class RiderServiceImpl implements RiderService {
+
+    private final ModelMapper modelmapper;
+    private final RideFareCalculationStrategy rideFareCalculationStrategy;
+    private final DriverMatchingStrategy driverMatchingStrategy;
+    private final RideRequestRepo rideRequestRepo;
 
     @Override
     public RideRequestDTO requestRide(RideRequestDTO riderequestdto) {
-        return null;
+
+        RideRequest rideRequest = modelmapper.map(riderequestdto, RideRequest.class);
+        rideRequest.setRiderequeststatus(RideRequestStatus.PENDING);
+        double fare = rideFareCalculationStrategy.calculateFare(rideRequest);
+        rideRequest.setFare(fare);
+        driverMatchingStrategy.findMatchingDriver(rideRequest);
+        RideRequest saveRequest = rideRequestRepo.save(rideRequest);
+        driverMatchingStrategy.findMatchingDriver(saveRequest);
+
+        return modelmapper.map(saveRequest,RideRequestDTO.class);
     }
 
     @Override

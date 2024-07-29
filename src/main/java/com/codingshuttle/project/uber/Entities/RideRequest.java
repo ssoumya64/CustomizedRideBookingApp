@@ -33,4 +33,6 @@ public class RideRequest {
     private PaymentMethod paymentmethod;
     @Enumerated(EnumType.STRING)
     private RideRequestStatus riderequeststatus;
+
+    private Double fare;
 }
