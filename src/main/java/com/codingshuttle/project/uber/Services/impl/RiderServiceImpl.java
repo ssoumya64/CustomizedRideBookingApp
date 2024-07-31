@@ -4,12 +4,11 @@ import com.codingshuttle.project.uber.DTO.DriverDTO;
 import com.codingshuttle.project.uber.DTO.RideDTO;
 import com.codingshuttle.project.uber.DTO.RideRequestDTO;
 import com.codingshuttle.project.uber.DTO.RiderDTO;
-import com.codingshuttle.project.uber.Entities.Driver;
-import com.codingshuttle.project.uber.Entities.Ride;
-import com.codingshuttle.project.uber.Entities.RideRequest;
+import com.codingshuttle.project.uber.Entities.*;
 import com.codingshuttle.project.uber.Entities.enums.RideRequestStatus;
 import com.codingshuttle.project.uber.Entities.enums.RideStatus;
 import com.codingshuttle.project.uber.Repositories.RideRequestRepo;
+import com.codingshuttle.project.uber.Repositories.RiderRepository;
 import com.codingshuttle.project.uber.Services.RideService;
 import com.codingshuttle.project.uber.Services.RiderService;
 import com.codingshuttle.project.uber.strategy.DriverMatchingStrategy;
@@ -27,11 +26,12 @@ import java.util.List;
 @Slf4j
 public class RiderServiceImpl implements RiderService {
 
+
     private final ModelMapper modelmapper;
     private final RideFareCalculationStrategy rideFareCalculationStrategy;
     private final DriverMatchingStrategy driverMatchingStrategy;
     private final RideRequestRepo rideRequestRepo;
-
+    private final RiderRepository riderRepository;
     @Override
     public RideRequestDTO requestRide(RideRequestDTO riderequestdto) {
 
@@ -64,5 +64,11 @@ public class RiderServiceImpl implements RiderService {
     @Override
     public List<RideDTO> getAllMyRides() {
         return null;
+    }
+
+    @Override
+    public Rider createNewRider(User user) {
+        Rider rider = Rider.builder().user(user).ratings(0.0).build();
+        return riderRepository.save(rider);
     }
 }
