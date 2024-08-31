@@ -18,4 +18,5 @@ public interface RiderService {
     RiderDTO getMyProfile();
     List<RideDTO> getAllMyRides();
     Rider createNewRider(User user);
+    Rider getCurrentRider();
 }

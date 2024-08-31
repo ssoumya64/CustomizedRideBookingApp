@@ -9,6 +9,7 @@ import com.codingshuttle.project.uber.Exceptions.RuntimeConflictException;
 import com.codingshuttle.project.uber.Repositories.UserRepository;
 import com.codingshuttle.project.uber.Services.AuthService;
 import com.codingshuttle.project.uber.Services.RiderService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public UserDTO signup(AuthSignupDTO signupdto) {
         User byEmail = userrepository.findByEmail(signupdto.getEmail()).orElse(null);
                 if(byEmail !=null){
